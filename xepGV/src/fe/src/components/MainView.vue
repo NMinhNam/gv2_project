@@ -1,9 +1,10 @@
 <script>
 import * as XLSX from 'xlsx/dist/xlsx.full.min';
+import axios from "axios";
+
 export default {
   name: 'MainView',
-  props: {
-  },
+  props: {},
   data() {
     return {
       filteredDataWithoutHeader: [],
@@ -32,11 +33,11 @@ export default {
 
         reader.onload = (e) => {
           const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
+          const workbook = XLSX.read(data, {type: 'array'});
 
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
           let dataWithOutHeader = jsonData.slice(1)
               .map(row => ({
@@ -45,12 +46,12 @@ export default {
                 ngayThi: this.parseExcelDate(row[3]),
                 caThi: row[4],
                 phongThi: row[7],
-                giangVien1: row[9]
+                giangVien1: row[9],
+                giangVien2: row[10]
               }));
           this.filteredDataWithoutHeader = dataWithOutHeader.filter(row => {
-            return row.maMon && row.lop && row.ngayThi && row.caThi && row.phongThi && row.giangVien1
+            return row.maMon && row.lop && row.ngayThi && row.caThi && row.phongThi && row.giangVien1 && row.giangVien2
           });
-
         };
 
         reader.readAsArrayBuffer(file);
@@ -77,6 +78,52 @@ export default {
     },
     btnLast_click() {
       this.page.currentPage = this.totalPages
+    },
+    async btnFilter_click() {
+      try {
+        let caDay = new Set()
+        let giangVien = {
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: []
+        }
+        let allGiangVien = new Set()
+        this.filteredDataWithoutHeader.forEach((e) => {
+          caDay.add(e.caThi)
+          if (!giangVien[e.caThi].includes(e.giangVien1)) {
+            giangVien[e.caThi].push(e.giangVien1)
+          }
+          allGiangVien.add(e.giangVien1)
+        })
+        caDay = Array.from(caDay)
+        allGiangVien = Array.from(allGiangVien)
+        for (let key in giangVien) {
+          if (giangVien[key].length === 0) {
+            delete giangVien[key]
+          }
+        }
+        let result = {
+          'caDay': caDay,
+          'giangVien1': giangVien,
+          'tatCaGiangVien': allGiangVien
+        }
+        const jsonResult = JSON.stringify(result)
+        const encodedResult = encodeURIComponent(jsonResult);
+
+        const response = await axios.get(`localhost:1111/api/v1/xeplichgv2/sapxep`,
+            {
+              params: {data: encodedResult},
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 }
@@ -92,6 +139,7 @@ export default {
     <div class="row d-flex justify-content-center">
       <div class="input-group mb-3 text-center w-50">
         <input type="file" class="form-control" id="fileUpload" @change="inputFile_change">
+        <button class="btn btn-primary" @click="btnFilter_click">Sắp xếp</button>
       </div>
     </div>
     <div class="row mb-3 mx-5">
@@ -104,6 +152,7 @@ export default {
           <th>Ca thi</th>
           <th>Phòng thi</th>
           <th>Giảng viên 1</th>
+          <th>Giảng viên 2</th>
         </tr>
         </thead>
         <tbody>
@@ -114,11 +163,12 @@ export default {
           <td class="bg-transparent">{{ item.caThi }}</td>
           <td class="bg-transparent">{{ item.phongThi }}</td>
           <td class="bg-transparent">{{ item.giangVien1 }}</td>
+          <td class="bg-transparent">{{ item.giangVien2 }}</td>
         </tr>
         </tbody>
         <tfoot>
         <tr class="border-0">
-          <td colspan="6" class="bg-transparent border-0 p-4 text-center">
+          <td colspan="7" class="bg-transparent border-0 p-4 text-center">
             <button type="button" class="btn border-black me-1" @click="btnFirst_click"
                     :disabled="page.currentPage == 1"><i class="fa-solid fa-angles-left"></i></button>
             <button type="button" class="btn border-black" @click="btnPrev_click"
