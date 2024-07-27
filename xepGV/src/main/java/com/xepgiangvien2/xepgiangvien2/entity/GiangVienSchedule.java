@@ -1,1 +1,1 @@
-package com.xepgiangvien2.xepgiangvien2.entity;public class GiangVienSchedule {}
+package com.xepgiangvien2.xepgiangvien2.entity;import lombok.AllArgsConstructor;import lombok.Data;import lombok.NoArgsConstructor;import java.util.List;import java.util.Map;@Data@AllArgsConstructor@NoArgsConstructorpublic class GiangVienSchedule {    private Map<String, List<String>> schedule;}

@@ -1,1 +1,1 @@
-package com.xepgiangvien2.xepgiangvien2.entity;public class GiangVien {}
+package com.xepgiangvien2.xepgiangvien2.entity;import lombok.AllArgsConstructor;import lombok.Data;import lombok.NoArgsConstructor;@Data@AllArgsConstructor@NoArgsConstructorpublic class GiangVien {    private String tenGiangVien;}

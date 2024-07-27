@@ -110,12 +110,12 @@ export default {
           'giangVien1': giangVien,
           'tatCaGiangVien': allGiangVien
         }
+        console.log(JSON.stringify(result))
         const jsonResult = JSON.stringify(result)
-        const encodedResult = encodeURIComponent(jsonResult);
 
         const response = await axios.get(`localhost:1111/api/v1/xeplichgv2/sapxep`,
             {
-              params: {data: encodedResult},
+              params: {data: jsonResult},
               headers: {
                 'Content-Type': 'application/json'
               }
