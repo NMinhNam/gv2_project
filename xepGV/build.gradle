@@ -25,18 +25,18 @@ repositories {
 }
 
 processResources {
-    dependsOn 'copyFrontendToBuild'
+    dependsOn 'npmBuild'
 }
 
 bootJar {
     archiveFileName = "app.jar"
 }
 
-task copyFrontendToBuild(type: Copy) {
-    dependsOn 'npmBuild'
-    from "$projectDir/src/fe/dist/"
-    into "$projectDir/src/main/resources/static"
-}
+//task copyFrontendToBuild(type: Copy) {
+//    dependsOn 'npmBuild'
+//    from "$projectDir/fe/dist/"
+//    into "$projectDir/main/resources/static"
+//}
 
 task npmBuild(type: NpmTask) {
     dependsOn 'npmInstall'
