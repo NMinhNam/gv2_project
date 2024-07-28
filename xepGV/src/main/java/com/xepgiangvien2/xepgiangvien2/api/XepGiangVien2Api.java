@@ -17,7 +17,7 @@ public class XepGiangVien2Api {
     @Autowired
     private GiangVienService giangVienService;
 
-    @GetMapping("/sapxep")
+    @PostMapping("/sapxep")
     public ResponseEntity<?> sapXepGiangVien(@RequestBody CaCoiThi caDayDTO) {
         Map<String, Object> responseApi = new HashMap<>();
         try {

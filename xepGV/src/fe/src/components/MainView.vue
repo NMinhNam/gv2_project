@@ -47,10 +47,10 @@ export default {
                 caThi: row[4],
                 phongThi: row[7],
                 giangVien1: row[9],
-                giangVien2: row[10]
+                giangVien2: row[10] || null
               }));
           this.filteredDataWithoutHeader = dataWithOutHeader.filter(row => {
-            return row.maMon && row.lop && row.ngayThi && row.caThi && row.phongThi && row.giangVien1 && row.giangVien2
+            return row.maMon && row.lop && row.ngayThi && row.caThi && row.phongThi && row.giangVien1
           });
         };
 
@@ -110,20 +110,40 @@ export default {
           'giangVien1': giangVien,
           'tatCaGiangVien': allGiangVien
         }
-        console.log(JSON.stringify(result))
+        console.log(result)
         const jsonResult = JSON.stringify(result)
 
-        const response = await axios.get(`localhost:1111/api/v1/xeplichgv2/sapxep`,
-            {
-              params: {data: jsonResult},
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            });
+        const response = await axios.post(`/api/v1/xeplichgv2/sapxep`, jsonResult, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         console.log(response.data);
+
+        const giangVien2Result = response.data.data;
+
+        // Cập nhật dữ liệu
+        this.updateGiangVien2(giangVien2Result);
+
       } catch (error) {
         console.error(error);
       }
+    },
+    updateGiangVien2(giangVien2Result) {
+      let giangVien2Index = {};
+
+      for (let ca in giangVien2Result) {
+        giangVien2Index[ca] = 0;
+      }
+
+      this.filteredDataWithoutHeader = this.filteredDataWithoutHeader.map(item => {
+        const ca = item.caThi;
+        if (giangVien2Result[ca] && giangVien2Index[ca] < giangVien2Result[ca].length) {
+          item.giangVien2 = giangVien2Result[ca][giangVien2Index[ca]];
+          giangVien2Index[ca]++;
+        }
+        return item;
+      });
     }
   }
 }
@@ -163,7 +183,7 @@ export default {
           <td class="bg-transparent">{{ item.caThi }}</td>
           <td class="bg-transparent">{{ item.phongThi }}</td>
           <td class="bg-transparent">{{ item.giangVien1 }}</td>
-          <td class="bg-transparent">{{ item.giangVien2 }}</td>
+          <td class="bg-transparent">{{ item.giangVien2 || 'Chưa có' }}</td>
         </tr>
         </tbody>
         <tfoot>
