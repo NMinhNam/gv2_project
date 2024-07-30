@@ -21,13 +21,13 @@ public class XepGiangVien2Api {
     public ResponseEntity<?> sapXepGiangVien(@RequestBody CaCoiThi caDayDTO) {
         Map<String, Object> responseApi = new HashMap<>();
         try {
-            responseApi.put("success",true);
-            responseApi.put("message","call api success");
-            responseApi.put("data",giangVienService.sapXepGiangVien(caDayDTO.getCaDay(),caDayDTO.getGiangVien1(),caDayDTO.getTatCaGiangVien()));
-        }catch (Exception e){
-            responseApi.put("success",false);
-            responseApi.put("message","call api Fail");
-            responseApi.put("data",null);
+            responseApi.put("success", true);
+            responseApi.put("message", "call api success");
+            responseApi.put("data", giangVienService.sapXepGiangVien(caDayDTO.getCaDay(), caDayDTO.getGiangVien1(), caDayDTO.getTatCaGiangVien(), caDayDTO.getBackupGiangVien()));
+        } catch (Exception e) {
+            responseApi.put("success", false);
+            responseApi.put("message", "call api Fail");
+            responseApi.put("data", null);
             e.printStackTrace();
         }
         return ResponseEntity.ok(responseApi);

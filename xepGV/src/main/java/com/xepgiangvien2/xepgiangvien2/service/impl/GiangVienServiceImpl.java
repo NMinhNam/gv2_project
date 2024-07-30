@@ -8,34 +8,8 @@ import java.util.*;
 @Service
 public class GiangVienServiceImpl implements GiangVienService {
 
-    private static final List<String> BACKUP_GIANG_VIEN = Arrays.asList( "anhtq51",
-            "vanny4",
-            "thongllh",
-            "lynk18",
-            "phuongck2",
-            "nhatbqm",
-            "hieunm46",
-            "lamtd9",
-            "huongltm",
-            "nhunglt15",
-            "phuongta11",
-            "trangctt4",
-            "phucnh60",
-            "nganntk45",
-            "datvp3",
-            "xuanntt32",
-            "hieuht",
-            "GVDuPhong1",
-            "GVDuPhong2",
-            "GVDuPhong3",
-            "GVDuPhong4",
-            "GVDuPhong5",
-            "GVDuPhong6",
-            "GVDuPhong7",
-            "GVDuPhong8",
-            "GVDuPhong9");
-
-    public Map<String, List<String>> sapXepGiangVien(List<String> caThi, Map<String, List<String>> listGV1, List<String> tatCaGiangVien) {
+    @Override
+    public Map<String, List<String>> sapXepGiangVien(List<String> caThi, Map<String, List<String>> listGV1, List<String> tatCaGiangVien, List<String> backupGiangVien) {
         Map<String, List<String>> giangVien2 = new HashMap<>();
 
         for (int i = 0; i < caThi.size(); i++) {
@@ -67,23 +41,23 @@ public class GiangVienServiceImpl implements GiangVienService {
             giangVien2.put(ca, giangVienDuocChon);
         }
 
-        // Fill null slots with random backup lecturers
-        fillNullSlots(giangVien2, tatCaGiangVien);
+        // Fill null slots with backup lecturers provided in the request
+        fillNullSlots(giangVien2, backupGiangVien, tatCaGiangVien);
 
         return giangVien2;
     }
 
-    private void fillNullSlots(Map<String, List<String>> giangVien2, List<String> tatCaGiangVien) {
+    private void fillNullSlots(Map<String, List<String>> giangVien2, List<String> backupGiangVien, List<String> tatCaGiangVien) {
         Random random = new Random();
         for (Map.Entry<String, List<String>> entry : giangVien2.entrySet()) {
             List<String> giangVienList = entry.getValue();
             for (int i = 0; i < giangVienList.size(); i++) {
                 if (giangVienList.get(i) == null) {
-                    String backupGiangVien;
+                    String backup;
                     do {
-                        backupGiangVien = BACKUP_GIANG_VIEN.get(random.nextInt(BACKUP_GIANG_VIEN.size()));
-                    } while (tatCaGiangVien.contains(backupGiangVien));
-                    giangVienList.set(i, backupGiangVien);
+                        backup = backupGiangVien.get(random.nextInt(backupGiangVien.size()));
+                    } while (tatCaGiangVien.contains(backup) || giangVienList.contains(backup));
+                    giangVienList.set(i, backup);
                 }
             }
         }
