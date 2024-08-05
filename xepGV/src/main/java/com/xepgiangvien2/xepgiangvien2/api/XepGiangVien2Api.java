@@ -3,7 +3,6 @@ package com.xepgiangvien2.xepgiangvien2.api;
 import com.xepgiangvien2.xepgiangvien2.entity.CaCoiThi;
 import com.xepgiangvien2.xepgiangvien2.service.GiangVienService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/xeplichgv2")
 @RequiredArgsConstructor
 public class XepGiangVien2Api {
-    @Autowired
-    private GiangVienService giangVienService;
+
+    private final GiangVienService giangVienService;
 
     @PostMapping("/sapxep")
     public ResponseEntity<?> sapXepGiangVien(@RequestBody CaCoiThi caDayDTO) {
@@ -28,7 +27,6 @@ public class XepGiangVien2Api {
             responseApi.put("success", false);
             responseApi.put("message", "call api Fail");
             responseApi.put("data", null);
-            e.printStackTrace();
         }
         return ResponseEntity.ok(responseApi);
     }
